@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GuruPintar - Generator Perangkat Pembelajaran</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f8fafc; --card:#ffffff; --border:#e2e8f0; --text:#1e293b; --muted:#64748b;
+  --accent:#4f46e5; --accent-dark:#4338ca; --accent-soft:#eef2ff;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1420; --card:#161d2c; --border:#2a3346; --text:#e6e9f0; --muted:#94a3b8;
+    --accent:#818cf8; --accent-dark:#6366f1; --accent-soft:#1e2438;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1420; --card:#161d2c; --border:#2a3346; --text:#e6e9f0; --muted:#94a3b8;
+  --accent:#818cf8; --accent-dark:#6366f1; --accent-soft:#1e2438;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100%}
+header{background:var(--accent-dark);position:sticky;top:0;padding-top:calc(env(safe-area-inset-top,0px));z-index:10}
+.header-inner{max-width:1100px;margin:0 auto;padding:14px 16px;display:flex;align-items:center;gap:10px}
+.logo{font-size:22px}
+.header-inner h1{color:#fff;font-size:17px;margin:0;font-weight:700}
+.header-inner p{color:#c7d2fe;font-size:11px;margin:0}
+main{max-width:1100px;margin:0 auto;padding:20px 16px 40px;display:grid;grid-template-columns:1fr;gap:20px}
+@media(min-width:900px){main{grid-template-columns:5fr 7fr}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px}
+label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);margin-bottom:5px}
+select,input{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:10px 12px;font-size:14px;margin-bottom:14px;font-family:inherit}
+select:focus,input:focus{outline:2px solid var(--accent);border-color:transparent}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+button.primary{width:100%;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:600;cursor:pointer}
+button.primary:disabled{opacity:.6;cursor:not-allowed}
+button.primary:hover:not(:disabled){background:var(--accent-dark)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.toolbar button{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:8px;font-size:12px;cursor:pointer}
+.toolbar button:disabled{opacity:.5;cursor:not-allowed}
+#status{font-size:11px;color:var(--muted);margin-bottom:10px}
+#output{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:18px;min-height:300px;font-size:13.5px;line-height:1.7}
+#output h2,#output h3{color:var(--accent-dark)}
+#output table{width:100%;border-collapse:collapse;margin:10px 0}
+#output td,#output th{border:1px solid var(--border);padding:6px 8px;font-size:12.5px}
+.placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;height:260px;color:var(--muted);text-align:center;font-size:13px}
+.sign{display:flex;justify-content:space-between;margin-top:24px;padding-top:14px;border-top:1px solid var(--border);font-size:12px;color:var(--text)}
+@media print{
+  header,.toolbar,.card:first-child{display:none!important}
+  body,#output{background:#fff;color:#000}
+}
+</style>
+</head>
+<body>
+<header><div class="header-inner">
+  <span class="logo">🎓</span>
+  <div><h1>GuruPintar</h1><p>Generator Perangkat Pembelajaran - Kurikulum Merdeka & K-13</p></div>
+</div></header>
+
+<main>
+  <section class="card">
+    <h2 style="margin-top:0;font-size:15px">Parameter Pembelajaran</h2>
+    <form id="form">
+      <label>Jenis Perangkat</label>
+      <select id="docType">
+        <option>Modul Ajar / RPP</option>
+        <option>Silabus</option>
+        <option>Tujuan Pembelajaran (TP) & ATP</option>
+        <option>Program Semester (Prosem)</option>
+        <option>Program Tahunan (Prota)</option>
+        <option>Kriteria Ketercapaian Tujuan Pembelajaran (KKTP)</option>
+        <option>Bahan Ajar Ringkas</option>
+      </select>
+      <label>Kurikulum</label>
+      <select id="curriculum">
+        <option>Kurikulum Merdeka</option>
+        <option>Kurikulum 2013 (Revisi)</option>
+      </select>
+      <div class="row2">
+        <div><label>Mata Pelajaran</label><input id="subject" placeholder="cth. Matematika" required></div>
+        <div><label>Kelas / Fase</label>
+          <select id="grade">
+            <option>Kelas 1 (Fase A)</option><option>Kelas 2 (Fase A)</option>
+            <option>Kelas 3 (Fase B)</option><option>Kelas 4 (Fase B)</option>
+            <option>Kelas 5 (Fase C)</option><option>Kelas 6 (Fase C)</option>
+            <option>Kelas 7 (Fase D)</option><option>Kelas 8 (Fase D)</option>
+            <option>Kelas 9 (Fase D)</option><option>Kelas 10 (Fase E)</option>
+            <option>Kelas 11 (Fase F)</option><option>Kelas 12 (Fase F)</option>
+          </select>
+        </div>
+      </div>
+      <label>Topik / Materi Pokok</label>
+      <input id="topic" placeholder="cth. Pecahan Senilai" required>
+      <div class="row2">
+        <div><label>Alokasi Waktu</label><input id="duration" placeholder="2 JP (2x45 menit)" required></div>
+        <div><label>Semester</label>
+          <select id="semester"><option>Ganjil</option><option>Genap</option></select>
+        </div>
+      </div>
+      <div class="row2">
+        <div><label>Nama Guru</label><input id="teacherName" placeholder="Nama & gelar"></div>
+        <div><label>Nama Sekolah</label><input id="schoolName" placeholder="SD/SMP/SMA ..."></div>
+      </div>
+      <button type="submit" class="primary" id="genBtn">✨ Buat Perangkat Pembelajaran</button>
+    </form>
+  </section>
+
+  <section class="card">
+    <div class="toolbar">
+      <button id="copyBtn" disabled>📋 Salin Teks</button>
+      <button id="wordBtn" disabled>📄 Unduh Word</button>
+      <button id="printBtn" disabled>🖨️ Cetak / PDF</button>
+    </div>
+    <p id="status">Belum ada dokumen dibuat.</p>
+    <div id="output">
+      <div class="placeholder">
+        <div style="font-size:34px;margin-bottom:8px">📖</div>
+        <p>Isi formulir di sebelah kiri lalu klik "Buat Perangkat Pembelajaran".</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+let sample = null;
+let lastMeta = null;
+claude.use("sample").then(s => sample = s);
+claude.use("downloads").then(d => window._downloads = d);
+
+document.getElementById('form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const v = id => document.getElementById(id).value;
+  const docType = v('docType'), curriculum = v('curriculum'), subject = v('subject');
+  const grade = v('grade'), topic = v('topic'), duration = v('duration'), semester = v('semester');
+  const teacherName = v('teacherName') || 'Guru Mata Pelajaran';
+  const schoolName = v('schoolName') || 'Satuan Pendidikan';
+  lastMeta = {docType, subject, grade, semester, topic, schoolName, teacherName};
+
+  const btn = document.getElementById('genBtn');
+  const status = document.getElementById('status');
+  const output = document.getElementById('output');
+  btn.disabled = true; btn.textContent = '⏳ Menyusun dokumen...';
+  status.textContent = 'AI sedang menyusun dokumen...';
+  output.innerHTML = '<div class="placeholder">⏳ Menyusun ' + docType + '...</div>';
+
+  const prompt = `Bertindaklah sebagai ahli kurikulum dan guru profesional Indonesia. Buatlah dokumen resmi ${docType} yang lengkap, terstruktur, dan profesional.
+Informasi:
+- Jenis Perangkat: ${docType}
+- Kurikulum: ${curriculum}
+- Mata Pelajaran: ${subject}
+- Kelas/Fase: ${grade}
+- Topik: ${topic}
+- Alokasi Waktu: ${duration}
+- Semester: ${semester}
+- Guru: ${teacherName}
+- Sekolah: ${schoolName}
+
+Keluarkan HANYA HTML bersih (tag h2,h3,p,ul,li,strong,table dsb, tanpa backtick markdown). Isi harus mendalam: identitas, tujuan pembelajaran, kegiatan pendahuluan-inti-penutup, asesmen/penilaian, dan refleksi guru/lembar kerja.`;
+
+  try {
+    if (!sample) sample = await claude.use("sample");
+    if (!sample) throw new Error('not_granted');
+    const res = await sample(prompt, {
+      modelTier: 'complex',
+      onText: ({text}) => { output.innerHTML = renderDoc(text, lastMeta); }
+    });
+    output.innerHTML = renderDoc(res.text, lastMeta);
+    status.textContent = 'Dokumen siap digunakan.';
+    document.getElementById('copyBtn').disabled = false;
+    document.getElementById('wordBtn').disabled = false;
+    document.getElementById('printBtn').disabled = false;
+  } catch (err) {
+    output.innerHTML = '<div class="placeholder">⚠️ Gagal membuat dokumen. Coba lagi sebentar lagi.</div>';
+    status.textContent = 'Terjadi kesalahan.';
+  }
+  btn.disabled = false; btn.textContent = '✨ Buat Perangkat Pembelajaran';
+});
+
+function renderDoc(text, meta){
+  let clean = text.replace(/```html/g,'').replace(/```/g,'').trim();
+  const today = new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
+  return `<div style="text-align:center;border-bottom:1px solid var(--border);padding-bottom:12px;margin-bottom:14px">
+    <h2 style="margin:0;text-transform:uppercase">${meta.docType}</h2>
+    <p style="margin:2px 0;font-weight:600;color:var(--accent)">${meta.subject} - ${meta.grade}</p>
+    <p style="margin:0;font-size:11px;color:var(--muted)">${meta.schoolName} | Semester ${meta.semester} | Topik: ${meta.topic}</p>
+  </div>
+  <div>${clean}</div>
+  <div class="sign">
+    <div>Mengetahui,<br>Kepala ${meta.schoolName}<br><br><br>______________________</div>
+    <div style="text-align:right">${today}<br>Guru Mata Pelajaran<br><br><br>${meta.teacherName}</div>
+  </div>`;
+}
+
+document.getElementById('copyBtn').onclick = () => {
+  const text = document.getElementById('output').innerText;
+  navigator.clipboard?.writeText(text).catch(()=>{});
+};
+document.getElementById('printBtn').onclick = () => window.print();
+document.getElementById('wordBtn').onclick = async () => {
+  const html = document.getElementById('output').innerHTML;
+  const source = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/1999/xhtml'><head><meta charset='utf-8'></head><body>" + html + "</body></html>";
+  try {
+    if (window._downloads) {
+      await window._downloads.save({filename: 'Perangkat_Pembelajaran.doc', data: source});
+    }
+  } catch(e) {}
+};
+</script>
+</body>
+</html>
